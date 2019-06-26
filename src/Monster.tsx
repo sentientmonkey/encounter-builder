@@ -81,7 +81,8 @@ class Monster extends React.Component<Props,State> {
 
     changeCount = (event: React.ChangeEvent<HTMLInputElement>): void => {
         let count = parseInt(event.target.value);
-        const xp = this.calculateXP(this.state.cr, isNaN(count) ? 0 : count);
+        count = (isNaN(count) || count < 1) ? 0 : count;
+        const xp = this.calculateXP(this.state.cr, count);
         this.props.updateMonster(this.props.id, xp, count);
         this.setState({count, xp});
     }

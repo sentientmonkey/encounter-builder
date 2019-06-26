@@ -1,6 +1,5 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { spyOn } from 'jasmine';
 
 import Monster from './Monster';
 import XP from './XP';
@@ -59,4 +58,12 @@ describe("<Monster />", function() {
         expect(subject.find(XP).prop('xp')).toEqual(200);
         expect(stub.updateMonster).toHaveBeenCalledWith(id, 200, 2);
     });
+
+    it("should not update count when it is negative", function() {
+        subject.find("#count")
+               .simulate("change", {target: {value: "-1"}});
+
+        expect(subject.state('count')).toEqual(0);
+    });
+
 });
