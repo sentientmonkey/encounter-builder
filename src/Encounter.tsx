@@ -10,18 +10,20 @@ interface MonsterState {
     count: number;
 }
 
-interface State {
+export interface EncounterState {
     monsters: MonsterState[];
     totalXP: number;
     adjustedXP: number;
 }
 
+export interface EncounterProps {}
+
 interface INumberToNumberMap {
     [key: number]: number;
 }
 
-class Encounter extends React.Component<any,State> {
-    state: State = {
+class Encounter extends React.Component<EncounterProps,EncounterState> {
+    state: EncounterState = {
         monsters: [],
         totalXP: 0,
         adjustedXP: 0,
@@ -99,7 +101,7 @@ class Encounter extends React.Component<any,State> {
 
     render() {
         const monsterElements = this.state.monsters.map((m) =>
-            <ListItem divider>
+            <ListItem key={m.id} divider>
                 <Monster key={m.id} id={m.id}
                          updateMonster={this.updateMonster}
                          removeMonster={this.removeMonster} />
@@ -111,7 +113,9 @@ class Encounter extends React.Component<any,State> {
                 <h1>Encounter Builder</h1>
                 <p>Total XP <XP xp={this.state.totalXP}/></p>
                 <p>Adjusted XP <XP xp={this.state.adjustedXP}/></p>
-                <Button variant="contained" color="primary" onClick={this.addMonster.bind(this)}>Add</Button>
+                <Button variant="contained" color="primary"
+                        className="add-monster"
+                        onClick={this.addMonster.bind(this)}>Add</Button>
             </Grid>
             <Grid item xs={8}>
               <List>

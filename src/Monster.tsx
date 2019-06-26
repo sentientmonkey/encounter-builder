@@ -3,13 +3,13 @@ import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-
 import DeleteIcon from '@material-ui/icons/Delete';
 import XP from './XP';
 
-interface Props {
+export interface MonsterProps {
     id: string;
     updateMonster: (id: string, xp: number, count: number) => void;
     removeMonster: (id: string) => void;
 }
 
-interface State {
+export interface MonsterState {
     cr: string;
     count: number;
     xp: number;
@@ -25,7 +25,7 @@ interface INameToNumberMap
     [key: string]: number;
 }
 
-class Monster extends React.Component<Props,State> {
+class Monster extends React.Component<MonsterProps,MonsterState> {
     CR_VALUES = ["0", "1/8", "1/4", "1/2"].concat(
         Array(30).fill("").map((_,i) => i.toString()));
 
@@ -57,7 +57,8 @@ class Monster extends React.Component<Props,State> {
      "21": 33000,
      "22": 41000,
      "23": 50000,
-     "24": 62000,
+     "24": 62000
+,
      "25": 75000,
      "26": 90000,
      "27": 105000,

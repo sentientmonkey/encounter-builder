@@ -30,7 +30,7 @@
   },
   "babel": {
     "presets": [
-     "react-app"
+      "react-app"
     ]
   },
   "browserslist": {
@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@babel/register": "^7.4.4",
+    "@types/enzyme": "^3.9.4",
     "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^9.0.0",
     "cross-env": "^5.2.0",

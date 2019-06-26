@@ -1,7 +1,7 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, ShallowWrapper } from 'enzyme';
 
-import Monster from './Monster';
+import Monster, { MonsterState, MonsterProps } from './Monster';
 import XP from './XP';
 
 describe("<Monster />", function() {
@@ -10,7 +10,7 @@ describe("<Monster />", function() {
         updateMonster: function() {},
         removeMonster: function() {},
     }
-    let subject;
+    let subject: ShallowWrapper<MonsterProps,MonsterState,Monster>;
 
     beforeEach(function() {
         spyOn(stub, 'updateMonster');
@@ -76,5 +76,4 @@ describe("<Monster />", function() {
 
         expect(stub.removeMonster).toHaveBeenCalledWith(id);
     });
-
 });
