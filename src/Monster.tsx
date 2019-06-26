@@ -97,14 +97,20 @@ class Monster extends React.Component<Props,State> {
 
     render() {
         const crItems = this.CR_VALUES
-                            .map((cr) =>
-                                <MenuItem value={cr}>{cr}</MenuItem>
+                            .map((cr, i) =>
+                                <MenuItem
+                                    key={i}
+                                    value={cr}>
+                                    {cr}
+                                </MenuItem>
                             );
         return <div>
             <p>Monster</p>
             <FormControl>
                 <InputLabel html-for="cr">CR</InputLabel>
-                <Select onChange={this.changeCR}
+                <Select
+                  id="cr-select"
+                  onChange={this.changeCR}
                   value={this.state.cr}
                   inputProps={{
                       name: 'cr',

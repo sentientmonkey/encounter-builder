@@ -5,12 +5,14 @@
   "dependencies": {
     "@material-ui/core": "^4.1.1",
     "@material-ui/icons": "^4.2.1",
+    "@types/jasmine": "^3.3.13",
     "@types/jest": "24.0.15",
     "@types/material-ui": "^0.21.6",
     "@types/node": "12.0.8",
     "@types/react": "16.8.21",
     "@types/react-dom": "16.8.4",
     "@types/uuid": "^3.4.4",
+    "jasmine": "^3.4.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
@@ -20,11 +22,16 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "cross-env NODE_ENV=test jasmine",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "babel": {
+    "presets": [
+     "react-app"
+    ]
   },
   "browserslist": {
     "production": [
@@ -37,5 +44,16 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/register": "^7.4.4",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^9.0.0",
+    "cross-env": "^5.2.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "ignore-styles": "^5.0.1",
+    "jasmine-enzyme": "^7.0.2",
+    "jsdom": "^15.1.1"
   }
 }

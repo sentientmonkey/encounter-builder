@@ -68,7 +68,7 @@ class Encounter extends React.Component<any,State> {
     };
 
     updateMonster = (id: string, xp: number, count: number) => {
-        this.setState((state) => {
+       this.setState((state) => {
             let monsters = state.monsters;
             const monster = monsters.find((m) => m.id === id)
             if (monster) {
