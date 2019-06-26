@@ -7,14 +7,18 @@ import XP from './XP';
 describe("<Monster />", function() {
     const id = "THX1128";
     let stub = {
-        updateMonster: function() {}
+        updateMonster: function() {},
+        removeMonster: function() {},
     }
     let subject;
 
     beforeEach(function() {
         spyOn(stub, 'updateMonster');
+        spyOn(stub, 'removeMonster');
         subject = shallow(<Monster id={id}
-                                 updateMonster={stub.updateMonster} />);
+                                   updateMonster={stub.updateMonster}
+                                   removeMonster={stub.removeMonster}
+        />);
 
     });
 
@@ -23,14 +27,14 @@ describe("<Monster />", function() {
     });
 
     it("should update XP for count", function() {
-        subject.find("#count")
+        subject.find(".count")
                 .simulate("change", {target: {value: "2"}});
 
         expect(subject.find(XP).prop('xp')).toEqual(20);
     });
 
     it("should call updateMonster when count changes", function() {
-        subject.find("#count")
+        subject.find(".count")
                .simulate("change", {target: {value: "2"}});
 
         expect(subject.find(XP).prop('xp')).toEqual(20);
@@ -38,20 +42,20 @@ describe("<Monster />", function() {
     });
 
     it("should update XP for CR and count", function() {
-        subject.find("#cr-select")
+        subject.find(".cr-select")
                .simulate("change", {target: {value: "1/2"}});
 
-        subject.find("#count")
+        subject.find(".count")
                .simulate("change", {target: {value: "2"}});
 
         expect(subject.find(XP).prop('xp')).toEqual(200);
     });
 
     it("should call updateMonster when XP changes", function() {
-        subject.find("#cr-select")
+        subject.find(".cr-select")
                .simulate("change", {target: {value: "1/2"}});
 
-        subject.find("#count")
+        subject.find(".count")
                .simulate("change", {target: {value: "2"}});
 
 
@@ -60,10 +64,17 @@ describe("<Monster />", function() {
     });
 
     it("should not update count when it is negative", function() {
-        subject.find("#count")
+        subject.find(".count")
                .simulate("change", {target: {value: "-1"}});
 
         expect(subject.state('count')).toEqual(0);
+    });
+
+    it("should remove monster when deleted", function() {
+        subject.find(".delete-monster")
+               .simulate("click");
+
+        expect(stub.removeMonster).toHaveBeenCalledWith(id);
     });
 
 });

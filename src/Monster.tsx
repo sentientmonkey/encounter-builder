@@ -110,7 +110,7 @@ class Monster extends React.Component<Props,State> {
             <FormControl>
                 <InputLabel html-for="cr">CR</InputLabel>
                 <Select
-                  id="cr-select"
+                  className="cr-select"
                   onChange={this.changeCR}
                   value={this.state.cr}
                   inputProps={{
@@ -121,14 +121,15 @@ class Monster extends React.Component<Props,State> {
                 </Select>
             </FormControl>
             <TextField
-                id="count"
+                className="count"
                 label="Count"
                 type="number"
                 value={this.state.count}
                 onChange={this.changeCount}
              />
           <p><XP xp={this.state.xp}/></p> XP
-          <DeleteIcon onClick={this.onDelete} />
+          <DeleteIcon className="delete-monster"
+                      onClick={this.onDelete} />
         </div>
     }
 }
