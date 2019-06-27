@@ -12,7 +12,7 @@ describe("<Encounter />", function() {
         subject = shallow(<Encounter />);
     })
 
-    it("should add a monster when add is clicked", function(){
+    it("should add a monster when add is clicked", function() {
         expect(subject.find(Monster).length).toEqual(0);
         subject.find(".add-monster")
                .simulate("click");
@@ -20,7 +20,7 @@ describe("<Encounter />", function() {
         expect(subject.find(Monster).length).toEqual(1);
     });
 
-    it("should update XP when monster is updated", function(){
+    it("should update XP when monster is updated", function() {
         subject.find(".add-monster")
                .simulate("click");
 
@@ -29,5 +29,19 @@ describe("<Encounter />", function() {
 
         expect(subject.state("totalXP")).toEqual(200);
         expect(subject.state("adjustedXP")).toEqual(300);
+    });
+
+    it("should handle removing a monster", function() {
+        subject.find(".add-monster")
+               .simulate("click");
+
+        const monster = subject.state("monsters")[0];
+        subject.instance().updateMonster(monster.id, 200, 2);
+
+        subject.instance().removeMonster(monster.id);
+
+        expect(subject.find(Monster).length).toEqual(0);
+        expect(subject.state("totalXP")).toEqual(0);
+        expect(subject.state("adjustedXP")).toEqual(0);
     });
 });
