@@ -1,6 +1,8 @@
 import React  from 'react';
 import { Button, Grid, List, ListItem } from '@material-ui/core';
 import Monster from './Monster';
+import Party from './Party';
+import Difficulty from './Difficulty';
 import XP from './XP';
 import uuid from 'uuid/v1';
 
@@ -14,6 +16,8 @@ export interface EncounterState {
     monsters: MonsterState[];
     totalXP: number;
     adjustedXP: number;
+    partyLevel: number;
+    partySize: number;
 }
 
 export interface EncounterProps {}
@@ -27,6 +31,8 @@ class Encounter extends React.Component<EncounterProps,EncounterState> {
         monsters: [],
         totalXP: 0,
         adjustedXP: 0,
+        partyLevel: 1,
+        partySize: 3,
     }
 
     MULTIPLIER: INumberToNumberMap = {
@@ -85,6 +91,14 @@ class Encounter extends React.Component<EncounterProps,EncounterState> {
         });
     }
 
+    onChangeSize = (size: number) =>{
+        this.setState({partySize: size});
+    }
+
+    onChangeLevel = (level: number) => {
+        this.setState({partyLevel: level});
+    }
+
     calculateXP = (monsters: MonsterState[]): number =>
         monsters.map((m) => m.xp)
                 .reduce((acc, curr) => acc + curr, 0);
@@ -109,20 +123,32 @@ class Encounter extends React.Component<EncounterProps,EncounterState> {
 
         return <div>
             <Grid container>
-            <Grid item xs={4}>
-                <h1>Encounter Builder</h1>
-                <p>Total XP <XP xp={this.state.totalXP}/></p>
-                <p>Adjusted XP <XP xp={this.state.adjustedXP}/></p>
-                <Button variant="contained" color="primary"
-                        className="add-monster"
-                        onClick={this.addMonster.bind(this)}>Add</Button>
-            </Grid>
-            <Grid item xs={8}>
-              <List>
-                  {monsterElements}
-              </List>
-            </Grid>
-        </Grid>
+              <Grid item xs={4}>
+                  <h1>Encounter Builder</h1>
+                  <p>Total XP <XP xp={this.state.totalXP}/></p>
+                  <p>Adjusted XP <XP xp={this.state.adjustedXP}/></p>
+
+        <Party size={this.state.partySize}
+               level={this.state.partyLevel}
+               onChangeLevel={this.onChangeLevel}
+               onChangeSize={this.onChangeSize} />
+
+                  <Button variant="contained" color="primary"
+                          className="add-monster"
+                          onClick={this.addMonster.bind(this)}>Add Monster</Button>
+
+              </Grid>
+              <Grid item xs={8}>
+                <List>
+                    {monsterElements}
+                </List>
+              </Grid>
+              <Grid item xs={4}>
+                  <Difficulty xp={this.state.adjustedXP}
+                              level={this.state.partyLevel}
+                              size={this.state.partySize} />
+              </Grid>
+          </Grid>
         </div>
     }
 }
