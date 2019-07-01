@@ -1,45 +1,45 @@
-import React, { Component, ChangeEvent } from 'react';
+import React, { SFC, ChangeEvent } from 'react';
 
 import { FormControl, InputLabel, Grid, MenuItem, OutlinedInput, Select, TextField } from '@material-ui/core';
 
 import SelectElement from './SelectElement';
+import {} from './ArrayExt';
 
-interface PartyState {}
-
-interface PartyProps {
+interface Props {
     level: number;
     size: number;
     onChangeLevel: (level: number) => void;
     onChangeSize: (size: number) => void;
 }
 
-class Party extends Component<PartyProps, PartyState> {
-    LEVELS = Array(20).fill("").map((_,i) => (i+1).toString());
+const LEVELS = Array(20)
+    .fill("")
+    .map((_,i) => i+1)
+    .map((x) => x.toString());
 
-    changeSize = (event: ChangeEvent<HTMLInputElement>): void => {
-        const size = parseInt(event.target.value as string);
-        this.props.onChangeSize(size);
-    }
+const Party: SFC<Props> = (props) => {
+    const {size, level, onChangeSize, onChangeLevel} = props;
 
-    changeLevel = (event: ChangeEvent<SelectElement>): void => {
-        const level = parseInt(event.target.value as string);
-        this.props.onChangeLevel(level);
-    }
+    const changeSize = (event: ChangeEvent<HTMLInputElement>): void => [event.target.value as string]
+            .map(parseInt)
+            .map(onChangeSize)
+            .first();
 
-    render() {
-        const { level, size } = this.props;
+    const changeLevel = (event: ChangeEvent<SelectElement>): void => [event.target.value as string]
+            .map(parseInt)
+            .map(onChangeLevel)
+            .first();
 
-        const levelItems = this.LEVELS
-                               .map((level,i) =>
-                                   <MenuItem
-                                       key={i}
-                                   value={level}>
-                                   {level}
-                                   </MenuItem>
-                               );
-        const labelWidth = 200;
+    const levelItems = LEVELS.map((level,i) =>
+                                <MenuItem
+                                    key={i}
+                                value={level}>
+                                {level}
+                                </MenuItem>
+                            );
+    const labelWidth = 200;
 
-        return <Grid container
+    return <Grid container
                      direction="column">
             <Grid item>
             <TextField
@@ -48,7 +48,7 @@ class Party extends Component<PartyProps, PartyState> {
                 label="Party Size"
                 type="number"
                 value={size}
-                onChange={this.changeSize}
+                onChange={changeSize}
             />
             </Grid>
             <Grid item>
@@ -56,7 +56,7 @@ class Party extends Component<PartyProps, PartyState> {
                 <InputLabel html-for="level">Avg Level</InputLabel>
                 <Select
                     className="level-select"
-                    onChange={this.changeLevel}
+                    onChange={changeLevel}
                     value={level}
                     input={<OutlinedInput labelWidth={labelWidth} name="level" id="level" />}>
                        {levelItems}
@@ -64,7 +64,6 @@ class Party extends Component<PartyProps, PartyState> {
             </FormControl>
             </Grid>
         </Grid>
-    }
 }
 
 export default Party;

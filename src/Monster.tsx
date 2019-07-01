@@ -5,14 +5,14 @@ import XP from './XP';
 
 export interface MonsterProps {
     id: string;
-    updateMonster: (id: string, xp: number, count: number) => void;
-    removeMonster: (id: string) => void;
+    count: number;
+    xp: number;
+    onChangeMonster: (id: string, xp: number, count: number) => void;
+    onRemoveMonster: (id: string) => void;
 }
 
 export interface MonsterState {
     cr: string;
-    count: number;
-    xp: number;
 }
 
 interface SelectElement {
@@ -57,8 +57,7 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
      "21": 33000,
      "22": 41000,
      "23": 50000,
-     "24": 62000
-,
+     "24": 62000,
      "25": 75000,
      "26": 90000,
      "27": 105000,
@@ -69,23 +68,20 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
 
     state = {
         cr: "0",
-        count: 1,
-        xp: 0,
     }
 
-    changeCR = (event: React.ChangeEvent<SelectElement>): void => {
+    onChangeCR = (event: React.ChangeEvent<SelectElement>): void => {
         const cr = event.target.value as string;
-        const xp = this.calculateXP(cr, this.state.count);
-        this.props.updateMonster(this.props.id, xp, this.state.count);
-        this.setState({cr, xp});
+        const xp = this.calculateXP(cr, this.props.count);
+        this.props.onChangeMonster(this.props.id, xp, this.props.count);
+        this.setState({cr});
     }
 
-    changeCount = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    onChangeCount = (event: React.ChangeEvent<HTMLInputElement>): void => {
         let count = parseInt(event.target.value);
         count = (isNaN(count) || count < 1) ? 0 : count;
         const xp = this.calculateXP(this.state.cr, count);
-        this.props.updateMonster(this.props.id, xp, count);
-        this.setState({count, xp});
+        this.props.onChangeMonster(this.props.id, xp, count);
     }
 
     calculateXP = (cr: string, count: number): number => {
@@ -94,10 +90,11 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
     };
 
     onDelete = (event: any): void => {
-        this.props.removeMonster(this.props.id);
+        this.props.onRemoveMonster(this.props.id);
     }
 
     render() {
+        const { count, xp } = this.props;
         const crItems = this.CR_VALUES
                             .map((cr, i) =>
                                 <MenuItem
@@ -112,7 +109,7 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
                 <InputLabel html-for="cr">CR</InputLabel>
                 <Select
                   className="cr-select"
-                  onChange={this.changeCR}
+                  onChange={this.onChangeCR}
                   value={this.state.cr}
                   inputProps={{
                       name: 'cr',
@@ -125,10 +122,10 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
                 className="count"
                 label="Count"
                 type="number"
-                value={this.state.count}
-                onChange={this.changeCount}
+                value={count}
+                onChange={this.onChangeCount}
              />
-          <p><XP xp={this.state.xp}/></p> XP
+          <p><XP xp={xp}/></p> XP
           <DeleteIcon className="delete-monster"
                       onClick={this.onDelete} />
         </div>

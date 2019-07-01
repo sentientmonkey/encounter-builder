@@ -14,8 +14,6 @@ interface MonsterState {
 
 export interface EncounterState {
     monsters: MonsterState[];
-    totalXP: number;
-    adjustedXP: number;
     partyLevel: number;
     partySize: number;
 }
@@ -29,14 +27,12 @@ interface INumberToNumberMap {
 class Encounter extends React.Component<EncounterProps,EncounterState> {
     state: EncounterState = {
         monsters: [],
-        totalXP: 0,
-        adjustedXP: 0,
         partyLevel: 1,
         partySize: 3,
     }
 
     MULTIPLIER: INumberToNumberMap = {
-        0:  0,
+        0:  1,
         1:  1,
         2: 	1.5,
         3: 	2,
@@ -54,99 +50,141 @@ class Encounter extends React.Component<EncounterProps,EncounterState> {
         15:	4,
     }
 
-    addMonster = () => {
-        this.setState((state) => {
-            let monsters = state.monsters;
-            monsters.push({id: uuid(), xp: 0, count: 1});
-            return {monsters: monsters};
-        });
-    };
-
-    removeMonster = (id: string) => {
-        this.setState((state) => {
-            let monsters = state.monsters;
-            monsters = monsters.filter((m) => m.id !== id);
-            const totalXP = this.calculateXP(monsters);
-            const adjustedXP = this.adjustXP(monsters, totalXP);
-            return {monsters: monsters,
-                    totalXP: totalXP,
-                    adjustedXP: adjustedXP};
-
-        });
-    };
-
-    updateMonster = (id: string, xp: number, count: number) => {
-       this.setState((state) => {
-            let monsters = state.monsters;
-            const monster = monsters.find((m) => m.id === id)
-            if (monster) {
-               monster.xp = xp;
-               monster.count = count;
-            }
-            const totalXP = this.calculateXP(monsters);
-            const adjustedXP = this.adjustXP(monsters, totalXP);
-            return {monsters: monsters,
-                    totalXP: totalXP,
-                    adjustedXP: adjustedXP};
-        });
+    SMALL_MULTIPLIER: INumberToNumberMap = {
+        0:  1.5,
+        1:  1.5,
+        2: 	2,
+        3: 	2.5,
+        4: 	2.5,
+        5: 	2.5,
+        6: 	2.5,
+        7: 	3,
+        8: 	3,
+        9: 	3,
+        10:	3,
+        11:	4,
+        12:	4,
+        13:	4,
+        14:	4,
+        15:	4,
     }
 
-    onChangeSize = (size: number) =>{
+    LARGE_MULTIPLIER: INumberToNumberMap = {
+        0:  0.5,
+        1:  0.5,
+        2: 	1,
+        3: 	1.5,
+        4: 	1.5,
+        5: 	1.5,
+        6: 	1.5,
+        7: 	2,
+        8: 	2,
+        9: 	2,
+        10:	2,
+        11:	2.5,
+        12:	2.5,
+        13:	2.5,
+        14:	2.5,
+        15:	3,
+    }
+
+    addMonster = () =>
+      this.setState((state) => {
+          let monsters = state.monsters;
+          monsters.push({id: uuid(), xp: 0, count: 1});
+          return {monsters: monsters};
+      });
+
+    removeMonster = (id: string) =>
+      this.setState((state) => {
+          let {monsters} = state;
+          monsters = monsters.filter((m) => m.id !== id);
+          return {monsters: monsters};
+      });
+
+    updateMonster = (id: string, xp: number, count: number) =>
+      this.setState((state) => {
+          let {monsters} = state;
+          const monster = monsters.find((m) => m.id === id)
+          if (monster) {
+              monster.xp = xp;
+              monster.count = count;
+          }
+          return {monsters: monsters};
+      });
+
+    onChangeSize = (size: number) =>
         this.setState({partySize: size});
-    }
 
-    onChangeLevel = (level: number) => {
+    onChangeLevel = (level: number) =>
         this.setState({partyLevel: level});
-    }
 
     calculateXP = (monsters: MonsterState[]): number =>
         monsters.map((m) => m.xp)
                 .reduce((acc, curr) => acc + curr, 0);
 
-    fetchMultiplier = (index: number): number =>
-        this.MULTIPLIER[index] || this.MULTIPLIER[15];
+    smallParty = (size: number) => (size < 3);
+    largeParty = (size: number) => (size > 5);
+
+    fetchMultiplier = (index: number, size: number): number => {
+        let table = this.MULTIPLIER;
+        if (this.smallParty(size)) {
+            table = this.SMALL_MULTIPLIER;
+        }
+        if (this.largeParty(size)) {
+            table = this.LARGE_MULTIPLIER;
+        }
+        return table[index] || table[15];
+    }
 
     totalMonsters = (monsters: MonsterState[]): number =>
         monsters.map((m) => m.count)
                 .reduce((acc, curr) => acc + curr, 0);
 
-    adjustXP = (monsters: MonsterState[], xp: number): number =>
-        this.fetchMultiplier(this.totalMonsters(monsters)) * xp;
+    adjustXP = (multiplier: number, xp: number): number =>
+        multiplier * xp;
 
     render() {
-        const monsterElements = this.state.monsters.map((m) =>
+        const { monsters, partySize, partyLevel } = this.state;
+        const totalXP = this.calculateXP(monsters);
+        const multiplier = this.fetchMultiplier(this.totalMonsters(monsters), partySize);
+        const adjustedXP = this.adjustXP(multiplier, totalXP);
+
+        const monsterElements = monsters.map((m) =>
             <ListItem key={m.id} divider>
                 <Monster key={m.id} id={m.id}
-                         updateMonster={this.updateMonster}
-                         removeMonster={this.removeMonster} />
+                         xp={m.xp}
+                         count={m.count}
+                         onChangeMonster={this.updateMonster}
+                         onRemoveMonster={this.removeMonster} />
              </ListItem>);
 
         return <div>
             <Grid container>
               <Grid item xs={4}>
                   <h1>Encounter Builder</h1>
-                  <p>Total XP <XP xp={this.state.totalXP}/></p>
-                  <p>Adjusted XP <XP xp={this.state.adjustedXP}/></p>
+                  <p>Total XP <XP key={"total"} xp={totalXP}/></p>
+                  <p>Adjusted XP <XP key={"adjusted"} xp={adjustedXP}/>
+                     (x {multiplier})
+                  </p>
 
-        <Party size={this.state.partySize}
-               level={this.state.partyLevel}
-               onChangeLevel={this.onChangeLevel}
-               onChangeSize={this.onChangeSize} />
+                  <Party size={partySize}
+                         level={partyLevel}
+                         onChangeLevel={this.onChangeLevel}
+                         onChangeSize={this.onChangeSize} />
 
                   <Button variant="contained" color="primary"
                           className="add-monster"
                           onClick={this.addMonster.bind(this)}>Add Monster</Button>
 
+                  <Difficulty xp={adjustedXP}
+                              level={partyLevel}
+                              size={partySize} />
               </Grid>
               <Grid item xs={8}>
                 <List>
                     {monsterElements}
                 </List>
-              </Grid>
-              <Grid item xs={4}>
-                  <Difficulty xp={this.state.adjustedXP}
-                              level={this.state.partyLevel}
-                              size={this.state.partySize} />
               </Grid>
           </Grid>
         </div>

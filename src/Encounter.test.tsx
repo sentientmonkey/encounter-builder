@@ -27,8 +27,8 @@ describe("<Encounter />", function() {
         const monster = subject.state("monsters")[0];
         subject.instance().updateMonster(monster.id, 200, 2);
 
-        expect(subject.state("totalXP")).toEqual(200);
-        expect(subject.state("adjustedXP")).toEqual(300);
+        expect(subject.contains(<XP key={"total"} xp={200} />)).toBe(true);
+        expect(subject.contains(<XP key={"adjusted"} xp={300} />)).toBe(true);
     });
 
     it("should handle removing a monster", function() {
@@ -37,11 +37,10 @@ describe("<Encounter />", function() {
 
         const monster = subject.state("monsters")[0];
         subject.instance().updateMonster(monster.id, 200, 2);
-
         subject.instance().removeMonster(monster.id);
 
         expect(subject.find(Monster).length).toEqual(0);
-        expect(subject.state("totalXP")).toEqual(0);
-        expect(subject.state("adjustedXP")).toEqual(0);
+        expect(subject.contains(<XP key={"total"} xp={0} />)).toBe(true);
+        expect(subject.contains(<XP key={"adjusted"} xp={0} />)).toBe(true);
     });
 });

@@ -1,6 +1,4 @@
-import React, {Component} from 'react';
-
-interface DifficultyState {}
+import React, {SFC} from 'react';
 
 interface DifficultyProps {
     xp: number;
@@ -26,8 +24,10 @@ interface INumberToArrayOfNumbersMap {
     [key: number]: number[];
 }
 
-class Difficulty extends Component<DifficultyProps, DifficultyState> {
-    static TABLE : INumberToArrayOfNumbersMap = {
+const Difficulty: SFC<DifficultyProps> = (props) => {
+    const {xp, level, size} = props;
+
+    const TABLE : INumberToArrayOfNumbersMap = {
       1: [25,	50,	75,	100],
       2: [50,	100,	150,	200],
       3: [75,	150,	225,	400],
@@ -50,34 +50,31 @@ class Difficulty extends Component<DifficultyProps, DifficultyState> {
       20: [2800,	5700,	8500,	12700],
     }
 
-    getAdjustedDifficulty = (level: number, size: number): number[] => {
-        return Difficulty.TABLE[level]
-                         .map((value) => value * size);
+    const getAdjustedDifficulty = (): number[] => {
+        return TABLE[level].map((value) => value * size);
     }
 
-    getDifficulty = (adjustedRow: number[]): Rating | null => {
-        if (this.props.xp <= adjustedRow[Rating.Easy]) {
+    const getDifficulty = (adjustedRow: number[]): Rating | null => {
+        if (xp < adjustedRow[Rating.Easy]) {
             return null;
-        } else if (this.props.xp <= adjustedRow[Rating.Medium]) {
+        } else if (xp < adjustedRow[Rating.Medium]) {
             return Rating.Easy;
-        } else if (this.props.xp <= adjustedRow[Rating.Hard]) {
+        } else if (xp < adjustedRow[Rating.Hard]) {
             return Rating.Medium;
-        } else if (this.props.xp <= adjustedRow[Rating.Deadly]) {
+        } else if (xp < adjustedRow[Rating.Deadly]) {
             return Rating.Hard;
         }
 
         return Rating.Deadly;
     }
 
-    render() {
-      const adjustedRow = this.getAdjustedDifficulty(this.props.size, this.props.level);
-      const ratings = adjustedRow.map((value, i) => ratingToString(i) + ": " + value + " ");
-      const difficulty: string = ratingToString(this.getDifficulty(adjustedRow));
-      return <div>
-            <p>Difficulty: {difficulty}</p>
-            <p>{ratings}</p>
-        </div>;
-    }
+    const adjustedRow = getAdjustedDifficulty();
+    const ratings = adjustedRow.map((value, i) => ratingToString(i) + ": " + value + " ");
+    const difficulty: string = ratingToString(getDifficulty(adjustedRow));
+    return <div>
+          <p>Difficulty: {difficulty}</p>
+          <p>{ratings}</p>
+      </div>;
 }
 
 export default Difficulty;

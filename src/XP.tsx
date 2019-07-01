@@ -1,10 +1,10 @@
-import React, {StatelessComponent} from 'react';
+import React, {SFC} from 'react';
 
 interface Props {
    xp: number,
 }
 
-const XP: StatelessComponent<Props> = (props: Props) => (
+const XP: SFC<Props> = (props) => (
     <span>{props.xp.toLocaleString()}</span>
 )
 
