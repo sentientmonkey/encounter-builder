@@ -1,5 +1,5 @@
 import React  from 'react';
-import { Button, Grid, List, ListItem } from '@material-ui/core';
+import { Button, Grid, List } from '@material-ui/core';
 import Monster from './Monster';
 import Party from './Party';
 import Difficulty from './Difficulty';
@@ -151,13 +151,11 @@ class Encounter extends React.Component<EncounterProps,EncounterState> {
         const adjustedXP = this.adjustXP(multiplier, totalXP);
 
         const monsterElements = monsters.map((m) =>
-            <ListItem key={m.id} divider>
                 <Monster key={m.id} id={m.id}
                          xp={m.xp}
                          count={m.count}
                          onChangeMonster={this.updateMonster}
-                         onRemoveMonster={this.removeMonster} />
-             </ListItem>);
+                         onRemoveMonster={this.removeMonster} />);
 
         return <div>
             <Grid container>
@@ -181,7 +179,7 @@ class Encounter extends React.Component<EncounterProps,EncounterState> {
                               level={partyLevel}
                               size={partySize} />
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={4}>
                 <List>
                     {monsterElements}
                 </List>

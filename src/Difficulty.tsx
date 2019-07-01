@@ -1,5 +1,7 @@
 import React, {SFC} from 'react';
 
+import Optional from './Optional';
+
 interface DifficultyProps {
     xp: number;
     level: number;
@@ -13,11 +15,8 @@ enum Rating {
     Deadly,
 }
 
-function ratingToString(rating: Rating | null) {
-    if (rating == null) {
-        return "";
-    }
-    return Rating[rating];
+function ratingToString(rating: Optional<Rating>): Optional<string> {
+    return rating.map((r) => Rating[r]);
 }
 
 interface INumberToArrayOfNumbersMap {
@@ -54,23 +53,30 @@ const Difficulty: SFC<DifficultyProps> = (props) => {
         return TABLE[level].map((value) => value * size);
     }
 
-    const getDifficulty = (adjustedRow: number[]): Rating | null => {
+    const getDifficulty = (adjustedRow: number[]): Optional<Rating> => {
         if (xp < adjustedRow[Rating.Easy]) {
-            return null;
+            return Optional.empty();
         } else if (xp < adjustedRow[Rating.Medium]) {
-            return Rating.Easy;
+            return Optional.of(Rating.Easy);
         } else if (xp < adjustedRow[Rating.Hard]) {
-            return Rating.Medium;
+            return Optional.of(Rating.Medium);
         } else if (xp < adjustedRow[Rating.Deadly]) {
-            return Rating.Hard;
+            return Optional.of(Rating.Hard);
         }
 
-        return Rating.Deadly;
+        return Optional.of(Rating.Deadly);
     }
 
     const adjustedRow = getAdjustedDifficulty();
-    const ratings = adjustedRow.map((value, i) => ratingToString(i) + ": " + value + " ");
-    const difficulty: string = ratingToString(getDifficulty(adjustedRow));
+    const ratings = adjustedRow
+        .map((value, i) => ratingToString(Optional.of<Rating>(i))
+            .map((str) => `${str}: ${value} `)
+            .get());
+
+    const difficulty: string = getDifficulty(adjustedRow)
+        .flatMap((r) => ratingToString(r))
+        .orElse("None");
+
     return <div>
           <p>Difficulty: {difficulty}</p>
           <p>{ratings}</p>

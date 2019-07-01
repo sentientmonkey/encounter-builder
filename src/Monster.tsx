@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Select, TextField, ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import XP from './XP';
 
@@ -94,7 +94,7 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
     }
 
     render() {
-        const { count, xp } = this.props;
+        const { id, count, xp } = this.props;
         const crItems = this.CR_VALUES
                             .map((cr, i) =>
                                 <MenuItem
@@ -103,8 +103,7 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
                                     {cr}
                                 </MenuItem>
                             );
-        return <div>
-            <p>Monster</p>
+        return <ListItem key={id} divider>
             <FormControl>
                 <InputLabel html-for="cr">CR</InputLabel>
                 <Select
@@ -125,10 +124,14 @@ class Monster extends React.Component<MonsterProps,MonsterState> {
                 value={count}
                 onChange={this.onChangeCount}
              />
-          <p><XP xp={xp}/></p> XP
+        <ListItemText>
+            <XP xp={xp} /> XP
+        </ListItemText>
+        <ListItemSecondaryAction>
           <DeleteIcon className="delete-monster"
                       onClick={this.onDelete} />
-        </div>
+        </ListItemSecondaryAction>
+      </ListItem>
     }
 }
 

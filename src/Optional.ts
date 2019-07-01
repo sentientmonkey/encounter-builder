@@ -16,7 +16,7 @@ export default class Optional<T>  {
     }
 
     isEmpty() {
-        return this.val == null
+        return this.val === null
     }
 
     map<R>(f: ICallable<T, R>): Optional<R> {
@@ -26,7 +26,28 @@ export default class Optional<T>  {
         return Optional.of(f(this.val as T));
     }
 
+    flatMap<R>(f: ICallable<Optional<T>, Optional<R>>): Optional<R> {
+        if (this.isEmpty()) {
+            return Optional.empty();
+        }
+        return f(this);
+    }
+
     get(): T | null {
         return this.val;
+    }
+
+    orElse(other: T): T {
+        if (this.isEmpty()) {
+            return other;
+        }
+        return this.val as T;
+    }
+
+    toString(): string {
+        if (this.isEmpty()) {
+            return '[Optional empty]';
+        }
+        return `[Optional ${this.val}]`;
     }
 }
